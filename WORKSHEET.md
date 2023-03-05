@@ -115,7 +115,7 @@ The following questions relate to `data/build.py` and `data/datasets.py`.
 
 ### 1.2.2 How is `__getitem__` different from the one in CIFAR10Dataset? How many data splits do we have now? Is it different from CIFAR10? Do we have labels/annotations for the test set?
 
-`This _getitem_ is different because it checks if the model is testing. If it is, then we add labels, but if not, the labels become arbitrary. In addition, because these images are made of pixel values, they are split, while the CIFAR10 was not. 
+`This _getitem_ is different because it checks if the model is testing. If it is, then we add labels, but if not, the labels become arbitrary. In addition, because these images are made of pixel values, they are split, while the CIFAR10 was not.` 
 
 ### 1.2.3 Visualizing the dataset
 
