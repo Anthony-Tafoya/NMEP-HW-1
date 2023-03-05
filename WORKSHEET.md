@@ -19,110 +19,75 @@ $ git remote rename origin staff # staff is now the provided repo
 $ git remote add origin <your repos remote url>
 $ git push -u origin main
 ```
+-1.0 What is the difference between torch.nn.Module and torch.nn.functional?
+nn.module is the base class for building PyTorch neural networks. I helps manage parameters and provides the class structure to define our own layers. The nn.fucntional is a package that has many packages like activation and pooling functions that help make up the forward(). 
 
+-1.1 What is the difference between a Dataset and a DataLoader?
+The difference bewteen a dataset and a dataloader is that a Dataset groups data from various sources together, while DataLoader takes a Dataset and turns it into an iterable with a set batch size to be processed.
 
+-1.2 What does @torch.no_grad() above a function header do?
+Torch.no.grad() means that PyTorch's gradient will not be run on the set of code and therefore cannot be used for backpropagation. Can help with speed. 
 
-# Part -1: PyTorch review
+Part 0: Understanding the codebase
+Read through README.md and follow the steps to understand how the repo is structured.
 
-Feel free to ask your NMEP friends if you don't know!
+0.0 What are the build.py files? Why do we have them?**
+The build.py files are essentiallly the middle main between the configs and working model. The goal is for the other files to use the model and data without needing to worry about intricate configs or deoendencies.
 
-## -1.0 What is the difference between `torch.nn.Module` and `torch.nn.functional`?
+0.1 Where would you define a new model?
+You would define the model in the build.py file and if need be change the model architecture in the config/model (lenet.py) file.
 
-`YOUR ANSWER HERE`
+0.2 How would you add support for a new dataset? What files would you need to change?
+You would have to change data/build.py, since that is where the configuration is for the model
 
-## -1.1 What is the difference between a Dataset and a DataLoader?
+0.3 Where is the actual training code?
+You see the actual training implementation in the main.py file.
 
-`YOUR ANSWER HERE`
+0.4 Create a diagram explaining the structure of main.py and the entire code repo.
+Be sure to include the 4 main functions in it (main, train_one_epoch, validate, evaluate) and how they interact with each other. Also explain where the other files are used. No need to dive too deep into any part of the code for now, the following parts will do deeper dives into each part of the code. For now, read the code just enough to understand how the pieces come together, not necessarily the specifics. You can use any tool to create the diagram (e.g. just explain it in nice markdown, draw it on paper and take a picture, use draw.io, excalidraw, etc.)
 
-## -1.2 What does `@torch.no_grad()` above a function header do?
+Screen Shot 2023-03-05 at 2 10 08 PM
 
-`YOUR ANSWER HERE`
+Part 1: Datasets
+The following questions relate to data/build.py and data/datasets.py.
 
+1.0 Builder/General
+1.0.0 What does build_loader do?
+Build loader takes in an argument relating to the dataset to pull. Afterward, the training, validation, and evaluation subsets are created with proper configs. For Image Net there is an augnment function which helps create artificial data to help increase the size.
 
+1.0.1 What functions do you need to implement for a PyTorch Dataset? (hint there are 3)
+For a PyTorch dataset, one needs to implement the _getitem_, _len_, and _get_transforms functions. The transforms are used to cut, crop, and rotate images so that there is more input in the data.
 
-# Part 0: Understanding the codebase
+1.1 CIFAR10Dataset
+1.1.0 Go through the constructor. What field actually contains the data? Do we need to download it ahead of time?
+The CIFAR10Dataset (Dataset) constructor captures the data using the CIFAR10 method inside of the dataset instance var. Because you are taking it from  a directory it does seem to require some pre-loading before hand, or at the least a function that contains the location of the data. 
 
-Read through `README.md` and follow the steps to understand how the repo is structured.
+1.1.1 What is self.train? What is self.transform?
+Self.transform povides the transformation the image will undergo, which will depend on whether it is training. The Self.train indicates that the model is currently in training, meaning it will now update gradients.
 
-## 0.0 What are the `build.py` files? Why do we have them?**
+1.1.2 What does __getitem__ do? What is index?
+_get_item takes the dataset and returns the index element in the set after it has been transformed.
 
-`YOUR ANSWER HERE`
+1.1.3 What does __len__ do?
+_len_ returns the length of the data that we are working with.
 
-## 0.1 Where would you define a new model?
+1.1.4 What does self._get_transforms do? Why is there an if statement?
+The self.get_transform determines the transformation the image will undergo which it is called in _getitem_. If it is in training, we will use data augmentation which include the colorjitter and flipping to provide different perspectives of the same image increasing our accuracy. If it is not training, then we have no data augmentation and just normalization (which makes data easier to navigate) and resizing to standardize the input.  
 
-`YOUR ANSWER HERE`
+1.1.5 What does transforms.Normalize do? What do the parameters mean? (hint: take a look here: https://pytorch.org/vision/main/generated/torchvision.transforms.Normalize.html)
+Mathematically to normalize an image is to subtract the input by the mean and put it over the std. Holistcally, it is just making the data easier to navigate and reduce the effect of outliers.
 
-## 0.2 How would you add support for a new dataset? What files would you need to change?
+1.2 MediumImagenetHDF5Dataset
+1.2.0 Go through the constructor. What field actually contains the data? Where is the data actually stored on honeydew? What other files are stored in that folder on honeydew? How large are they?
+The file instance variable contains the data. The filepath of the data in honeydew is /data/medium-imagenet/medium-imagenet-nmep-96.hdf5. The CIFAR10 dataset is also in the same folder with the size of ___.
 
-`YOUR ANSWER HERE`
+Some background: HDF5 is a file format that stores data in a hierarchical structure. It is similar to a python dictionary. The files are binary and are generally really efficient to use. Additionally, h5py.File() does not actually read the entire file contents into memory. Instead, it only reads the data when you access it (as in __getitem__). You can learn more about hdf5 here and h5py here.
 
-## 0.3 Where is the actual training code?
+1.2.1 How is _get_transforms different from the one in CIFAR10Dataset?
+Instead of just checking if it is trained and doing two different outcomes, getTranforms checks if it is in training mode and wants to be augmented. In addition, the transforms are kept in a list. In addition we divide by 256, which is a normalization tactic. 
 
-`YOUR ANSWER HERE`
-
-## 0.4 Create a diagram explaining the structure of `main.py` and the entire code repo.
-
-Be sure to include the 4 main functions in it (`main`, `train_one_epoch`, `validate`, `evaluate`) and how they interact with each other. Also explain where the other files are used. No need to dive too deep into any part of the code for now, the following parts will do deeper dives into each part of the code. For now, read the code just enough to understand how the pieces come together, not necessarily the specifics. You can use any tool to create the diagram (e.g. just explain it in nice markdown, draw it on paper and take a picture, use draw.io, excalidraw, etc.)
-
-`YOUR ANSWER HERE`
-
-
-
-# Part 1: Datasets
-
-The following questions relate to `data/build.py` and `data/datasets.py`.
-
-## 1.0 Builder/General
-
-### 1.0.0 What does `build_loader` do?
-
-`YOUR ANSWER HERE`
-
-### 1.0.1 What functions do you need to implement for a PyTorch Datset? (hint there are 3)
-
-`YOUR ANSWER HERE`
-
-## 1.1 CIFAR10Dataset
-
-### 1.1.0 Go through the constructor. What field actually contains the data? Do we need to download it ahead of time?
-
-`YOUR ANSWER HERE`
-
-### 1.1.1 What is `self.train`? What is `self.transform`?
-
-`YOUR ANSWER HERE`
-
-### 1.1.2 What does `__getitem__` do? What is `index`?
-
-`YOUR ANSWER HERE`
-
-### 1.1.3 What does `__len__` do?
-
-`YOUR ANSWER HERE`
-
-### 1.1.4 What does `self._get_transforms` do? Why is there an if statement?
-
-`YOUR ANSWER HERE`
-
-### 1.1.5 What does `transforms.Normalize` do? What do the parameters mean? (hint: take a look here: https://pytorch.org/vision/main/generated/torchvision.transforms.Normalize.html)
-
-`YOUR ANSWER HERE`
-
-## 1.2 MediumImagenetHDF5Dataset
-
-### 1.2.0 Go through the constructor. What field actually contains the data? Where is the data actually stored on honeydew? What other files are stored in that folder on honeydew? How large are they?
-
-`YOUR ANSWER HERE`
-
-> *Some background*: HDF5 is a file format that stores data in a hierarchical structure. It is similar to a python dictionary. The files are binary and are generally really efficient to use. Additionally, `h5py.File()` does not actually read the entire file contents into memory. Instead, it only reads the data when you access it (as in `__getitem__`). You can learn more about [hdf5 here](https://portal.hdfgroup.org/display/HDF5/HDF5) and [h5py here](https://www.h5py.org/).
-
-### 1.2.1 How is `_get_transforms` different from the one in CIFAR10Dataset?
-
-`YOUR ANSWER HERE`
-
-### 1.2.2 How is `__getitem__` different from the one in CIFAR10Dataset? How many data splits do we have now? Is it different from CIFAR10? Do we have labels/annotations for the test set?
-
-`YOUR ANSWER HERE`
+1.2.2 How is __getitem__ different from the one in CIFAR10Dataset? How many data splits do we have now? Is it different from CIFAR10? Do we have labels/annotations for the test set?
+`This getitem is different because it checks if the model is testing. If it is, then we add labels, but if not, the labels become arbitrary. In addition, because these images are made of pixel values, they are split, while the CIFAR10 was not.
 
 ### 1.2.3 Visualizing the dataset
 
@@ -131,7 +96,6 @@ Visualize ~10 or so examples from the dataset. There's many ways to do it - you 
 Be sure to also get the class names. You might notice that we don't have them loaded anywhere in the repo - feel free to fix it or just hack it together for now, the class names are in a file in the same folder as the hdf5 dataset.
 
 `YOUR ANSWER HERE`
-
 
 # Part 2: Models
 
