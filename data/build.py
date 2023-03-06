@@ -2,6 +2,7 @@ from torch.utils.data import DataLoader
 
 from data.datasets import CIFAR10Dataset, MediumImagenetHDF5Dataset
 
+import matplotlib.pyplot as plt
 
 def build_loader(config):
     if config.DATA.DATASET == "cifar10":
@@ -14,6 +15,21 @@ def build_loader(config):
         dataset_test = MediumImagenetHDF5Dataset(config.DATA.IMG_SIZE, split="test", augment=False)
     else:
         raise NotImplementedError
+
+    #Added by Anthony 
+    data_sample = DataLoader(
+        dataset_train,
+        batch_size=10,
+        shuffle=True,
+        num_workers=config.DATA.NUM_WORKERS,
+        pin_memory=config.DATA.PIN_MEMORY,
+    )
+
+    images, _ = next(iter(data_sample))
+    grid = utils.make_grid(images, nrow=2)
+    plt.imshow(grid.permute(1, 2, 0))
+    plt.axis('off')
+    plt.show()
 
     data_loader_train = DataLoader(
         dataset_train,
