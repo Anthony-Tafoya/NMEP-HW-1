@@ -1,8 +1,12 @@
+print(1)
+import sys
+
+import matplotlib.pyplot as plt
+import torch
 from torch.utils.data import DataLoader
 
 from data.datasets import CIFAR10Dataset, MediumImagenetHDF5Dataset
 
-import matplotlib.pyplot as plt
 
 def build_loader(config):
     if config.DATA.DATASET == "cifar10":
@@ -16,7 +20,7 @@ def build_loader(config):
     else:
         raise NotImplementedError
 
-    #Added by Anthony 
+    # Added by Anthony
     data_sample = DataLoader(
         dataset_train,
         batch_size=10,
@@ -26,9 +30,9 @@ def build_loader(config):
     )
 
     images, _ = next(iter(data_sample))
-    grid = utils.make_grid(images, nrow=2)
+    grid = torch.utils.make_grid(images, nrow=2)
     plt.imshow(grid.permute(1, 2, 0))
-    plt.axis('off')
+    plt.axis("off")
     plt.show()
 
     data_loader_train = DataLoader(
