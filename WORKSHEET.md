@@ -123,7 +123,7 @@ Visualize ~10 or so examples from the dataset. There's many ways to do it - you 
 
 Be sure to also get the class names. You might notice that we don't have them loaded anywhere in the repo - feel free to fix it or just hack it together for now, the class names are in a file in the same folder as the hdf5 dataset.
 
-`Written but not completely run`
+`Written but not completely able to run`
 
 # Part 2: Models
 
@@ -131,17 +131,15 @@ The following questions relate to `models/build.py` and `models/models.py`.
 
 ## What models are implemented for you?
 
-`YOUR ANSWER HERE`
+`The LeNet and ResNet18 models have been implemented for me. `
 
 ## What do PyTorch models inherit from? What functions do we need to implement for a PyTorch Model? (hint there are 2)
 
-`YOUR ANSWER HERE`
+`We inherit from the nn.module class which ensure that graidents and parameters work accordingly. We have the __init__ class and the forward() class that we inherit from.`
 
 ## How many layers does our implementation of LeNet have? How many parameters does it have? (hint: to count the number of parameters, you might want to run the code)
 
-`YOUR ANSWER HERE`
-
-
+`We have 7 layers (2 Conv2d, 2 AvgPool2D, and 3 Linear layers). After running the code, there are 276 M parameters.`
 
 # Part 3: Training
 
@@ -149,17 +147,26 @@ The following questions relate to `main.py`, and the configs in `configs/`.
 
 ## 3.0 What configs have we provided for you? What models and datasets do they train on?
 
-`YOUR ANSWER HERE`
+`There are quite a large amount of configs, but just to name a few: color_jitter, batch_size, dataset, img_size, num_workers, pin_memory, epochs, LR, and more. Based on on our congif, we can choose to either train the model on lenet or resnet18.`
 
 ## 3.1 Open `main.py` and go through `main()`. In bullet points, explain what the function does.
 
-`YOUR ANSWER HERE`
+`- Prepares and stores key features of model (model architecture, training/eval/val training dataset, optimizer, and loss function)`
+`- Iterates over training data, running the training set, which updates gradients, and then running a validation set which can help with overfitting`
+`- It keeps track of the max accuracy and then afterward runs the evaluation dataset and then saves those predictions into a csv/kaggle format`
 
 ## 3.2 Go through `validate()` and `evaluate()`. What do they do? How are they different? 
 > Could we have done better by reusing code? Yes. Yes we could have but we didn't... sorry...
 
-`YOUR ANSWER HERE`
+`Validate():`
+`- Validate prepares the criterion`
+`- Iterates through validation set recording loss and accuracy over the set`
+`- Returns the average of the accuracy and the loss`
 
+`Evaluate():` 
+`- Sets the model into evaluation mode`
+`- For each element in the training set, append the outpit to a list called preds or predictions. This is then returned.`
+`- The purpose is to test the model on a set it has not seen before`
 
 # Part 4: AlexNet
 
