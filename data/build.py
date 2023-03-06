@@ -1,9 +1,10 @@
-print(1)
 import sys
 
 import matplotlib.pyplot as plt
+import numpy as np
 import torch
 from torch.utils.data import DataLoader
+from torchvision import datasets, io, models, ops, transforms, utils
 
 from data.datasets import CIFAR10Dataset, MediumImagenetHDF5Dataset
 
@@ -20,7 +21,7 @@ def build_loader(config):
     else:
         raise NotImplementedError
 
-    # Added by Anthony
+    ######## Added by Anthony
     data_sample = DataLoader(
         dataset_train,
         batch_size=10,
@@ -28,12 +29,7 @@ def build_loader(config):
         num_workers=config.DATA.NUM_WORKERS,
         pin_memory=config.DATA.PIN_MEMORY,
     )
-
-    images, _ = next(iter(data_sample))
-    grid = torch.utils.make_grid(images, nrow=2)
-    plt.imshow(grid.permute(1, 2, 0))
-    plt.axis("off")
-    plt.show()
+    #########
 
     data_loader_train = DataLoader(
         dataset_train,
@@ -42,6 +38,13 @@ def build_loader(config):
         num_workers=config.DATA.NUM_WORKERS,
         pin_memory=config.DATA.PIN_MEMORY,
     )
+
+    image, _ = next(iter(data_loader_train))
+
+    image = torch.nn.functional.normalize(image[0], p=2.0, dim=1).permute(1, 2, 0)
+    plt.imshow(image)
+    plt.plot()
+    plt.show()
 
     data_loader_val = DataLoader(
         dataset_val,
