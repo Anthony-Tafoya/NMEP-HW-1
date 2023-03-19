@@ -196,7 +196,20 @@ Linear with num_classes output units
 ## 4.1 How many parameters does AlexNet have? How does it compare to LeNet? With the same batch size, how much memory do LeNet and AlexNet take up while training? 
 > (hint: use `gpuststat`)
 
-`YOUR ANSWER HERE`
+`We could use gpuststat, but if we were to do it by hand here it is how I think we would do it: 
+ There are three input parameters so every input layer is going to be multiplied by 3.
+ 
+ For the first convolution, it is (11 x 11 x 3 x 64) + 64 
+ For the second convoliution, it is (5 x 5 x 3 x 192) + 192
+ For the third convolution, it is (3 x 3 x 3 x 384) + 384
+ For the fourth convolution, it is (3 x 3 x 3 x 256) + 256 
+ For the fifth convolution,  it is (3 x 3 x 3 x 256) + 256 
+ 
+ The linear layers are going to be: 
+ (4096 x 4096) + 4096 
+
+ The MaxPool layers have no parameters so there is no worries about that
+`
 
 ## 4.2 Train AlexNet on CIFAR10. What accuracy do you get?
 
