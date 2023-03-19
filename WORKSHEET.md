@@ -172,7 +172,7 @@ The following questions relate to `main.py`, and the configs in `configs/`.
 
 ## Implement AlexNet. Feel free to use the provided LeNet as a template. For convenience, here are the parameters for AlexNet:
 
-`
+```
 Input NxNx3 # For CIFAR 10, you can set img_size to 70
 Conv 11x11, 64 filters, stride 4, padding 2
 MaxPool 3x3, stride 2
@@ -189,7 +189,7 @@ Linear with 4096 output units
 Dropout 0.5
 Linear with 4096 output units
 Linear with num_classes output units
-`
+```
 
 > ReLU activation after every Conv and Linear layer. DO **NOT** Forget to add activatioons after every layer. Do not apply activation after the last layer.
 
