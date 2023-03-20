@@ -49,7 +49,7 @@ class ResNetBlock(nn.Module):
         # TODO: Code here to initialize the shortcut layer
         if stride != 1 or in_channels != out_channels:       
             self.shortcut = nn.Sequential(
-                nn.Conv2d(in_channels = in_channels, out_channels=out_channels, kernel_size=1, stride=stride, padding=1, bias=False),
+                nn.Conv2d(in_channels = in_channels, out_channels=out_channels, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(out_channels)
             )
         ## END YOUR CODE
