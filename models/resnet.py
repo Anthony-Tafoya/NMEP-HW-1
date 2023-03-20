@@ -41,7 +41,7 @@ class ResNetBlock(nn.Module):
         # TODO: Initialize conv and batch norm layers with the correct parameters       
         self.conv1 = nn.Conv2d(in_channels = in_channels, out_channels=out_channels, kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn1 =  nn.BatchNorm2d(out_channels)
-        self.conv2 = nn.Conv2d(in_channels = in_channels, out_channels=out_channels, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(out_channels, out_channels=out_channels, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(out_channels)
         ## Use some conditional logic when defining your shortcut layer
         ## For a no-op layer, consider creating an empty nn.Sequential()
