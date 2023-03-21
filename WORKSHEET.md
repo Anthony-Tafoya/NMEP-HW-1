@@ -218,7 +218,7 @@ Report training and validation accuracy on AlexNet and LeNet. Report hyperparame
 > You can just copy the config file, don't need to write it all out again.
 > Also no need to tune the models much, you'll do it in the next part.
 
-`YOUR ANSWER HERE`
+`I got 70.3% training accuracy as my max, 69.9% as the validation`
 
 
 
